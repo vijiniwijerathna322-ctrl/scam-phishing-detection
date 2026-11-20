@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smishdet"
+version = "0.1.0"
+description = "Scam and phishing SMS detection for Sinhala, Tamil and code-mixed text"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.0",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+ml = [
+  "torch",
+  "transformers>=4.40",
+  "datasets>=2.18",
+  "evaluate",
+  "scikit-learn>=1.3",
+  "sentencepiece",
+]
+serve = ["fastapi", "uvicorn", "gradio"]
+dev = ["pytest>=8", "pytest-cov", "ruff", "mypy", "pre-commit"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

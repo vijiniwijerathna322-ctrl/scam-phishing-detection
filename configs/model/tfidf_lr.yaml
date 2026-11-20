@@ -1,0 +1,5 @@
+name: tfidf_lr
+type: sklearn
+ngram_range: [2, 5]
+analyzer: char_wb
+class_weight: balanced

@@ -1,0 +1,6 @@
+seed: 42
+epochs: 4
+batch_size: 32
+learning_rate: 2.0e-5
+weight_decay: 0.01
+class_weighted_loss: true

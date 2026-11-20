@@ -1,0 +1,5 @@
+name: xlmr_base
+type: transformer
+pretrained: xlm-roberta-base
+max_length: 128
+# alternatives: google/muril-base-cased, NLPC-UOM/SinBERT-large
