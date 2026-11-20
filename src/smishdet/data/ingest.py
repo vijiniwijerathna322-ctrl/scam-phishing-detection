@@ -29,7 +29,12 @@ class RawRecord:
     source: str
 
 
-_LABELS = {"ham": Label.HAM, "legitimate": Label.HAM, "spam": Label.SPAM, "smishing": Label.SMISHING}
+_LABELS = {
+    "ham": Label.HAM,
+    "legitimate": Label.HAM,
+    "spam": Label.SPAM,
+    "smishing": Label.SMISHING,
+}
 
 
 def _parse_label(value: str) -> Label | None:
