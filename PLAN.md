@@ -135,6 +135,9 @@ ScamAndPhishingDetection/
 | Privacy of real SMS | Scrubbing, consent, gated release |
 | Overfitting to templates | Template-group splits, unseen-campaign test |
 
+## 11b. Phase 2 (extension, after the SMS dataset and classifier are done)
+Multi-channel: WhatsApp and Facebook messages. Plan: add a `channel` field (`sms`, `whatsapp`, `facebook`) to the schema, new scam types (fake job/loan pages, giveaways, Marketplace, account-hijack), longer `max_length`, emoji handling, and a separate evaluation slice per channel. Data only from synthetic messages modelled on SLCERT/TRCSL alerts and consented, PII-scrubbed donations. No scraping of private chats or Facebook (privacy law and platform terms). Decide the exact API/data route when Phase 2 starts.
+
 ## 12. Immediate Next Steps
 1. Read the nlpaics 1.7 paper and the SMS phishing review for taxonomy and methods.
 2. Scaffold repo (`uv init`, pre-commit, package layout).
