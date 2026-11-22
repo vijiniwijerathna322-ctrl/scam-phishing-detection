@@ -63,7 +63,14 @@ python -m smishdet.models.train_baseline --data data/processed/multilingual.csv 
 python -m smishdet.models.train_transformer --epochs 2 --max-length 64
 python -m smishdet.data.review build          # sheet for native-speaker reviewers
 python -m smishdet.data.review apply          # import answers, build the gold set
+python -m smishdet.serving.app                # Gradio demo at http://127.0.0.1:7860
 ```
+
+The demo (`pip install -e ".[serve]"`) loads whichever trained models exist in `outputs/`
+(TF-IDF, XLM-R), scrubs links/phone numbers exactly as in training, and flags low-confidence
+results. It listens on localhost only and does not store messages. It is a research demo:
+its examples come from the same templates the models trained on, so high confidence there
+says nothing about real-world messages.
 
 Raw datasets are not included: download UCI SMS Spam Collection and Mendeley SMS Phishing
 yourself into `data/raw/` and check their licences first (see the `ingest.py` docstring).

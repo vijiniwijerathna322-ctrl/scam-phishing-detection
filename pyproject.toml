@@ -50,7 +50,7 @@ mypy_path = "src"
 explicit_package_bases = true
 
 [[tool.mypy.overrides]]
-module = ["sklearn.*", "joblib.*", "yaml.*", "torch.*", "transformers.*"]
+module = ["sklearn.*", "joblib.*", "yaml.*", "torch.*", "transformers.*", "gradio.*"]
 ignore_missing_imports = true
 follow_imports = "skip"  # behave the same whether or not the heavy ML libs are installed
 
