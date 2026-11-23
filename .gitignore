@@ -16,3 +16,4 @@ mlruns/
 *.safetensors
 .env
 *.log
+release/
