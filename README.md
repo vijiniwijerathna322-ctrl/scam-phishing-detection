@@ -12,7 +12,7 @@ and roadmap, [docs/datasheet.md](docs/datasheet.md) for the dataset description 
 |---|---|
 | English seed (UCI + Mendeley, deduplicated, PII-scrubbed) | done, 6,012 messages |
 | Machine translation to Sinhala / Tamil (NLLB-200, quality-filtered) | pilot done: 445 si, 505 ta |
-| Synthetic messages from SLCERT/TRCSL scam themes (5 language varieties) | done, 1,770 messages |
+| Synthetic messages from SLCERT/TRCSL scam themes (5 language varieties) | done, 3,967 messages from 38 templates (v2, with optional surface noise) |
 | Baselines: TF-IDF + LR, XLM-R fine-tune | done |
 | Native-speaker review (gold set) | **not started: needs reviewers** |
 | Full translation (all 6,012), more synthetic templates, MuRIL/SinBERT | todo |
@@ -20,18 +20,26 @@ and roadmap, [docs/datasheet.md](docs/datasheet.md) for the dataset description 
 
 ## Results so far (read the caveats)
 
-Macro-F1 on the multilingual split (`data/processed/multilingual.csv`, 8,732 rows):
+Macro-F1 on the multilingual split. The table uses **dataset v1** (8,732 rows, 1,770
+synthetic messages); the models were trained on it:
 
 | Model | val | test | held-out (val+test) |
 |---|---|---|---|
 | TF-IDF char n-grams + LR | 0.867 | **0.896** | 0.883 |
 | XLM-R base, 2 epochs | 0.906 | 0.892 | 0.902 |
 
+**Dataset v2** (10,929 rows, 3,967 synthetic messages from 38 templates, with noise) changes
+which templates are held out, so its scores are not comparable with v1. TF-IDF retrained on v2:
+val 0.818, test 0.955, held-out 0.880. The val-test gap (0.82 vs 0.96) shows how much scores
+swing with the few held-out templates, so treat any single number as rough. Held-out slices are
+now larger: code-mixed 225-231 rows (was 36), synthetic 1,138 rows scoring 0.855. XLM-R has
+not been retrained on v2 (about 4 hours on CPU).
+
 - **Use the test column to compare models.** XLM-R's epoch was chosen on val, so val and
   held-out favour it. On test the two models are indistinguishable.
 - Sinhala/Tamil/code-mixed held-out data are machine translations and synthetic templates,
   **not real SMS**. Per-language scores say little about real-world Sinhala/Tamil messages.
-  The code-mixed slices have only 36 messages each.
+  In v1 the code-mixed slices had only 36 messages each (now over 200, from few templates).
 - TF-IDF trained on English only scores 0.72 (si) and 0.75 (ta) on the translated data, but
   much of that is shared tokens (`<URL>`, numbers, brand names), not true transfer.
 - Real and synthetic data must be reported separately (see `source_type` slices).

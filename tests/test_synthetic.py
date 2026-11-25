@@ -4,7 +4,7 @@ import pytest
 
 from smishdet.data.script import detect_script
 from smishdet.data.synthetic import LANGS, generate, render, split_messages
-from smishdet.data.synthetic_templates import DEADLINES, META, TEMPLATES
+from smishdet.data.synthetic_templates import DAYS, DEADLINES, META, TEMPLATES
 from smishdet.domain.schema import Label, Script
 
 
@@ -13,8 +13,45 @@ def test_every_language_has_every_template():
         assert set(TEMPLATES[lang]) == set(META), lang
 
 
-def test_deadline_pools_are_parallel():
+def test_language_pools_are_parallel():
     assert len({len(v) for v in DEADLINES.values()}) == 1
+    assert len({len(v) for v in DAYS.values()}) == 1
+
+
+def test_label_counts_after_expansion():
+    labels = [m.label for m in META.values()]
+    assert labels.count(Label.SPAM) >= 8 and labels.count(Label.HAM) >= 14
+
+
+def test_noise_zero_is_clean_and_noise_keeps_placeholders():
+    clean = [m.text for m in generate(per_template=4, noise=0.0)]
+    assert clean == [m.text for m in generate(per_template=4)]
+    noisy = list(generate(per_template=8, noise=1.0))
+    assert [m.text for m in noisy] != [m.text for m in generate(per_template=8)]
+    clean_by_id = {m.id: m.text for m in generate(per_template=8)}
+    for m in noisy:
+        original = clean_by_id.get(m.id)
+        if original:  # same variant, check placeholders survive and are not altered
+            assert original.count("<URL>") == m.text.count("<URL>")
+            assert original.count("<PHONE>") == m.text.count("<PHONE>")
+        assert "<url>" not in m.text and "<phone>" not in m.text  # never lower-cased
+
+
+def test_noise_is_deterministic():
+    a = [m.text for m in generate(per_template=6, seed=3, noise=0.5)]
+    b = [m.text for m in generate(per_template=6, seed=3, noise=0.5)]
+    assert a == b
+
+
+def test_noise_does_not_depend_on_label():
+    """Share of noisy variants should be similar across labels (no label shortcut)."""
+    clean = {m.id: m.text for m in generate(per_template=20)}
+    rates = {}
+    for label in (Label.HAM, Label.SPAM, Label.SMISHING):
+        msgs = [m for m in generate(per_template=20, noise=0.3) if m.label == label]
+        changed = sum(m.text != clean.get(m.id, m.text) for m in msgs)
+        rates[label] = changed / len(msgs)
+    assert max(rates.values()) - min(rates.values()) < 0.15, rates
 
 
 @pytest.mark.parametrize("lang", list(LANGS))

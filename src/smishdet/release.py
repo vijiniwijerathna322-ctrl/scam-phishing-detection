@@ -78,8 +78,9 @@ numbers are included. Messages name real Sri Lankan institutions (banks, telcos,
 Police and Post) as the public alerts do; they are fabricated and do not come from them.
 
 ## Limitations (read before use)
-- **Only 23 templates.** Diversity is low, especially for spam ({labels.get('spam', 0)} rows)
-  and ham. Many rows differ only in slot values (bank, amount, deadline).
+- **Only {len({r['template_group'] for r in rows})} templates.** Diversity is low. Many rows
+  differ only in slot values (bank, amount, deadline) or light surface noise, and held-out
+  evaluation rests on a few templates per label, so scores swing a lot.
 - **Not reviewed by native speakers.** Sinhala, Tamil, Singlish and Tanglish texts were
   written without native-speaker review and may be unnatural or wrong.
 - Models trained on this data look far better on it than on real messages, because test

@@ -11,17 +11,20 @@ working dataset in `data/processed/multilingual.csv`. Update before any release.
 - **Not for:** blocking real users' messages without human review, profiling individuals,
   or any production decision. It is not a benchmark of real Sinhala/Tamil SMS yet.
 
-## Composition (v0.1, 8,732 rows)
+## Composition (v0.2, 10,929 rows)
 | Part | Rows | What it is |
 |---|---|---|
 | English seed | 6,012 | UCI SMS Spam Collection + Mendeley SMS Phishing, deduplicated |
 | Translated si | 445 | Machine-translated (NLLB-200) from English seed, quality-filtered |
 | Translated ta | 505 | Same, Tamil |
-| Synthetic | 1,770 | Template-generated in en, si, ta, si-en (Singlish), ta-en (Tanglish) |
+| Synthetic | 3,967 | 38 templates in en, si, ta, si-en (Singlish), ta-en (Tanglish), 30% of variants with surface noise |
 
 Labels: `ham`, `spam`, `smishing` (+ `scam_type` for synthetic smishing: traffic fine,
-customs/delivery, bank card, prize/lottery, government aid, job/loan, OTP/NIC harvesting).
-Overall: 5,714 ham, 827 spam, 2,191 smishing.
+customs/delivery, bank card, prize/lottery, government aid, job/loan, OTP/NIC harvesting,
+other utility-disconnection scams).
+Overall: 6,696 ham, 1,466 spam, 2,767 smishing.
+(v0.1 had 8,732 rows with 23 templates; the models and the Hugging Face staging in this
+repo were built on v0.1 unless stated.)
 
 Columns: `id, text, label, language, script, source, scam_type, template_group, split`.
 `source` is `uci`, `mendeley`, `translated:<origin>` or `synthetic`.
@@ -53,8 +56,9 @@ would be dropped (none occurred).
   SMS slang; filters removed 13-19% of rows but cannot confirm correctness.
 - **Native-speaker review has not happened.** Sinhala/Tamil/Singlish/Tanglish templates were
   written without review. The review workflow and guideline exist (`docs/annotation_guidelines.md`).
-- **Low diversity in synthetic data.** 23 templates only. Spam and ham are especially few
-  (spam 70, ham 375 synthetic rows); val/test slices for code-mixed text have 36 rows each.
+- **Low diversity in synthetic data.** 38 templates only (16 smishing, 8 spam, 14 ham).
+  Many rows differ only in slot values or light noise. Held-out evaluation depends on just
+  2-3 held-out templates per label, so scores swing a lot between val and test.
 - **English seed bias.** UCI/Mendeley are older, UK/Indian-English and not Sri Lankan; the
   UCI and Mendeley sets overlap (about 4,753 common messages, deduplicated here).
 - **Class imbalance** (smishing is 25% overall, 75% of synthetic data).
